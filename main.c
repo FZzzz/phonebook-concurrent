@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 #ifndef THREAD_NUM
 #define THREAD_NUM 4
 #endif
-//OPT 
+//OPT
     clock_gettime(CLOCK_REALTIME, &start);
 
     char *map = mmap(NULL, fs, PROT_READ, MAP_SHARED, fd, 0);
@@ -90,8 +90,7 @@ int main(int argc, char *argv[])
     append_a **app = (append_a **) malloc(sizeof(append_a *) * THREAD_NUM);
 //pthread append
     for (int i = 0; i < THREAD_NUM; i++)
-        app[i] = new_append_a(map + MAX_LAST_NAME_SIZE * i, map + fs, i,
-                              THREAD_NUM, entry_pool + i);
+        app[i] = new_append_a(map + MAX_LAST_NAME_SIZE * i, map + fs, i,THREAD_NUM, entry_pool + i);
 
     clock_gettime(CLOCK_REALTIME, &mid);
     for (int i = 0; i < THREAD_NUM; i++)
@@ -99,6 +98,7 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < THREAD_NUM; i++)
         pthread_join(tid[i], NULL);
+
     entry *etmp;
     pHead = app[0]->pHead;
     etmp = app[0]->pLast;
