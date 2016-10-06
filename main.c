@@ -72,6 +72,7 @@ int main(int argc, char *argv[])
 #ifndef THREAD_NUM
 #define THREAD_NUM 4
 #endif
+//OPT 
     clock_gettime(CLOCK_REALTIME, &start);
 
     char *map = mmap(NULL, fs, PROT_READ, MAP_SHARED, fd, 0);
@@ -87,6 +88,7 @@ int main(int argc, char *argv[])
 
     pthread_t *tid = (pthread_t *) malloc(sizeof(pthread_t) * THREAD_NUM);
     append_a **app = (append_a **) malloc(sizeof(append_a *) * THREAD_NUM);
+//pthread append
     for (int i = 0; i < THREAD_NUM; i++)
         app[i] = new_append_a(map + MAX_LAST_NAME_SIZE * i, map + fs, i,
                               THREAD_NUM, entry_pool + i);
@@ -97,24 +99,12 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < THREAD_NUM; i++)
         pthread_join(tid[i], NULL);
-
     entry *etmp;
-    pHead = pHead->pNext;
-    for (int i = 0; i < THREAD_NUM; i++) {
-        if (i == 0) {
-            pHead = app[i]->pHead->pNext;
-            dprintf("Connect %d head string %s %p\n", i,
-                    app[i]->pHead->pNext->lastName, app[i]->ptr);
-        } else {
-            etmp->pNext = app[i]->pHead->pNext;
-            dprintf("Connect %d head string %s %p\n", i,
-                    app[i]->pHead->pNext->lastName, app[i]->ptr);
-        }
-
+    pHead = app[0]->pHead;
+    etmp = app[0]->pLast;
+    for (int i = 1; i < THREAD_NUM; i++) {
+        etmp->pNext = app[i]->pHead;
         etmp = app[i]->pLast;
-        dprintf("Connect %d tail string %s %p\n", i,
-                app[i]->pLast->lastName, app[i]->ptr);
-        dprintf("round %d\n", i);
     }
 
     clock_gettime(CLOCK_REALTIME, &end);
